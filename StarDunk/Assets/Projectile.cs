@@ -5,10 +5,18 @@ using UnityEngine.SceneManagement;
 public class Projectile : MonoBehaviour
 {
     [SerializeField] private float force = 1;
+    [SerializeField] private float gravity = 1;
+    [SerializeField] private AudioClip throwSFX;
+    [SerializeField] private bool allowJump = true;
+    [SerializeField] private int maxJumps = 3;
+    [SerializeField] private float jumpMultiplier = 1;
 
     private LineRenderer lr;
     private Rigidbody2D rb;
     private Vector2 lineStartPos;
+    private bool canShoot = true;
+    private bool canJump = false;
+    private int timesJumped = 0;
 
     private void Awake()
     {
@@ -16,11 +24,31 @@ public class Projectile : MonoBehaviour
         lr = GetComponent<LineRenderer>();
     }
 
+    private void Start()
+    {
+        rb.gravityScale = 0;
+    }
+
     private void Update()
     {
         Vector2 mousePosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
 
-        Debug.Log(mousePosition);
+        if (canJump && (Input.GetKeyDown(KeyCode.Space) || Input.GetMouseButtonDown(0)) && timesJumped < maxJumps)
+        {
+            Debug.Log("bruh");
+            rb.linearVelocityY = 0;
+            rb.linearVelocityY += jumpMultiplier * Time.deltaTime;
+            if (rb.linearVelocityX > 0)
+            {
+                rb.linearVelocityX = -rb.linearVelocityX;
+            }
+            timesJumped++;
+        }
+
+        if (!canShoot)
+        {
+            return;
+        }
 
         if (Input.GetMouseButtonDown(0))
         {
@@ -30,9 +58,10 @@ public class Projectile : MonoBehaviour
         if (Input.GetMouseButton(0))
         {
             Vector2 lineEndPos = mousePosition;
-            Vector2 velocity = (lineStartPos - lineEndPos) * force;
+            Vector2 velocity = (lineEndPos - lineStartPos) * force;
 
-            Vector2[] trajectory = Plot(rb, (Vector2)transform.position, velocity, 500);
+            const int steps = 500;
+            Vector2[] trajectory = Plot(rb, (Vector2)transform.position, velocity, steps);
 
             lr.positionCount = trajectory.Length;
 
@@ -47,9 +76,17 @@ public class Projectile : MonoBehaviour
         if (Input.GetMouseButtonUp(0))
         {
             Vector2 lineEndPos = mousePosition;
-            Vector2 velocity = (lineStartPos - lineEndPos) * force;
+            Vector2 velocity = (lineEndPos - lineStartPos) * force;
 
+            rb.gravityScale = gravity;
             rb.linearVelocity = velocity;
+            Camera.main.GetComponent<AudioSource>().PlayOneShot(throwSFX);
+            canShoot = false;
+            lr.enabled = false;
+            if (allowJump)
+            {
+                canJump = true;
+            }
         }
     }
 
@@ -58,7 +95,7 @@ public class Projectile : MonoBehaviour
         Vector2[] results = new Vector2[steps];
 
         float timestep = Time.fixedDeltaTime / Physics2D.velocityIterations;
-        Vector2 gravityAccel = Mathf.Pow(timestep, 2) * rigidbody.gravityScale * Physics2D.gravity;
+        Vector2 gravityAccel = Mathf.Pow(timestep, 2) * gravity * Physics2D.gravity;
 
         float drag = 1 - timestep * rigidbody.linearDamping;
         Vector2 moveStep = velocity * timestep;
