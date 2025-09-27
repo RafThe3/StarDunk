@@ -32,22 +32,17 @@ public class Net : MonoBehaviour
         extraCleanShot = !(hitBackboard || hitRim);
 
         multiplier = basket ? 1 : cleanShot ? 2 : 3;
-        if (streak > 1)
-        {
-            multiplier += streak - 1;
-        }
         
         scoreText.text = $"Score: {score}";
     }
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
-        
         AudioClip clip = basket ? baseScoreSFX : cleanShot ? cleanShotSFX : extraCleanShotSFX;
 
         Camera.main.GetComponent<AudioSource>().PlayOneShot(clip);
-        score += baseScore * multiplier;
         CheckStreak();
+        score += baseScore * multiplier;
         Debug.Log(streak);
         StartCoroutine(DisplayBasketType());
         Destroy(collision.gameObject);
@@ -80,6 +75,11 @@ public class Net : MonoBehaviour
         else
         {
             streak = 0;
+        }
+
+        if (streak > 1)
+        {
+            multiplier += streak - 1;
         }
     }
 

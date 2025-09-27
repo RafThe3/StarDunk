@@ -4,13 +4,27 @@ using UnityEngine.Rendering.Universal;
 
 public class Backboard : MonoBehaviour
 {
-    [SerializeField] private bool isActive = false;
+    [SerializeField] private float activeLength = 1;
     [SerializeField] private Net net;
+
+    private bool isActive = false;
+    private float timeActive = 0;
 
     private void Update()
     {
         SpriteRenderer spriteRenderer = GetComponent<SpriteRenderer>();
         Light2D light2D = GetComponent<Light2D>();
+
+        if (isActive)
+        {
+            timeActive += Time.deltaTime;
+        }
+
+        if (timeActive >= activeLength)
+        {
+            isActive = false;
+            timeActive = 0;
+        }
 
         spriteRenderer.color = isActive ? Color.yellow : Color.gray;
         light2D.enabled = isActive;

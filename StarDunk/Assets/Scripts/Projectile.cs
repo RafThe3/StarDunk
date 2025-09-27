@@ -7,9 +7,9 @@ public class Projectile : MonoBehaviour
     [SerializeField] private float force = 1;
     [SerializeField] private float gravity = 1;
     [SerializeField] private AudioClip throwSFX;
-    [SerializeField] private bool allowJump = true;
+    [SerializeField] private bool allowMultiJump = true;
     [SerializeField] private int maxJumps = 3;
-    [SerializeField] private float jumpMultiplier = 1;
+    [SerializeField] private float jumpHeight = 1;
 
     private LineRenderer lr;
     private Rigidbody2D rb;
@@ -33,20 +33,20 @@ public class Projectile : MonoBehaviour
     {
         Vector2 mousePosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
 
-        if (canJump && (Input.GetKeyDown(KeyCode.Space) || Input.GetMouseButtonDown(0)) && timesJumped < maxJumps)
-        {
-            Debug.Log("bruh");
-            rb.linearVelocityY = 0;
-            rb.linearVelocityY += jumpMultiplier * Time.deltaTime;
-            if (rb.linearVelocityX > 0)
-            {
-                rb.linearVelocityX = -rb.linearVelocityX;
-            }
-            timesJumped++;
-        }
-
         if (!canShoot)
         {
+            if (canJump && (Input.GetKeyDown(KeyCode.Space) || Input.GetMouseButtonDown(0)) && timesJumped < maxJumps)
+            {
+                Debug.Log("bruh");
+                rb.linearVelocityY = 0;
+                rb.linearVelocityY += jumpHeight * Time.deltaTime;
+                if (rb.linearVelocityX > 0)
+                {
+                    rb.linearVelocityX = -rb.linearVelocityX;
+                }
+                timesJumped++;
+            }
+
             return;
         }
 
@@ -83,7 +83,7 @@ public class Projectile : MonoBehaviour
             Camera.main.GetComponent<AudioSource>().PlayOneShot(throwSFX);
             canShoot = false;
             lr.enabled = false;
-            if (allowJump)
+            if (allowMultiJump)
             {
                 canJump = true;
             }

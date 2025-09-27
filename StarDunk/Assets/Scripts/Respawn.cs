@@ -8,6 +8,11 @@ public class Respawn : MonoBehaviour
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
+        RespawnProjectile(collision);
+    }
+
+    private void RespawnProjectile(Collider2D collision)
+    {
         Destroy(collision.gameObject);
         spawner.Spawn(respawnSFX);
         net.ResetValues();
