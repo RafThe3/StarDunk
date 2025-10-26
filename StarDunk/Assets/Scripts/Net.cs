@@ -1,6 +1,7 @@
 using UnityEngine;
 using TMPro;
 using System.Collections;
+using UnityEngine.SocialPlatforms.Impl;
 
 public class Net : MonoBehaviour
 {
@@ -11,6 +12,7 @@ public class Net : MonoBehaviour
     [SerializeField] private AudioClip cleanShotSFX;
     [SerializeField] private AudioClip extraCleanShotSFX;
     [SerializeField] private TextMeshProUGUI basketTypeText;
+    [SerializeField] private GameManager gameManager;
 
     [HideInInspector] public bool hitBackboard = false;
     [HideInInspector] public bool hitRim = false;
@@ -32,8 +34,13 @@ public class Net : MonoBehaviour
         extraCleanShot = !(hitBackboard || hitRim);
 
         multiplier = basket ? 1 : cleanShot ? 2 : 3;
+
+        if (streak > PlayerPrefs.GetInt("Streak"))
+        {
+            PlayerPrefs.SetInt("Streak", streak);
+        }
         
-        scoreText.text = $"Score: {score}";
+        scoreText.text = $"Score: {score}\nHigh Score: {PlayerPrefs.GetInt("Score")}";
     }
 
     private void OnTriggerEnter2D(Collider2D collision)
@@ -43,11 +50,24 @@ public class Net : MonoBehaviour
         Camera.main.GetComponent<AudioSource>().PlayOneShot(clip);
         CheckStreak();
         score += baseScore * multiplier;
-        Debug.Log(streak);
+        PlayerPrefs.SetInt("Score", score);
         StartCoroutine(DisplayBasketType());
         Destroy(collision.gameObject);
         spawner.Spawn();
         ResetValues();
+
+        /* for multi-ball
+        if (!collision.CompareTag("Clone"))
+        {
+            Destroy(collision.gameObject);
+            spawner.Spawn();
+        }
+        else
+        {
+            collision.GetComponent<Projectile>().CanShoot(false);
+        }
+        ResetValues();
+        */
     }
 
     public void ResetValues()

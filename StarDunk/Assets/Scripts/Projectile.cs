@@ -1,4 +1,5 @@
 using System.Runtime.CompilerServices;
+using TMPro;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -24,11 +25,6 @@ public class Projectile : MonoBehaviour
         lr = GetComponent<LineRenderer>();
     }
 
-    private void Start()
-    {
-        rb.gravityScale = 0;
-    }
-
     private void Update()
     {
         Vector2 mousePosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
@@ -37,14 +33,7 @@ public class Projectile : MonoBehaviour
         {
             if (canJump && (Input.GetKeyDown(KeyCode.Space) || Input.GetMouseButtonDown(0)) && timesJumped < maxJumps)
             {
-                Debug.Log("bruh");
-                rb.linearVelocityY = 0;
-                rb.linearVelocityY += jumpHeight * Time.deltaTime;
-                if (rb.linearVelocityX > 0)
-                {
-                    rb.linearVelocityX = -rb.linearVelocityX;
-                }
-                timesJumped++;
+                Jump();
             }
 
             return;
@@ -80,6 +69,7 @@ public class Projectile : MonoBehaviour
 
             rb.gravityScale = gravity;
             rb.linearVelocity = velocity;
+            //Clone(velocity);
             Camera.main.GetComponent<AudioSource>().PlayOneShot(throwSFX);
             canShoot = false;
             lr.enabled = false;
@@ -88,6 +78,27 @@ public class Projectile : MonoBehaviour
                 canJump = true;
             }
         }
+    }
+
+    private void Jump()
+    {
+        rb.linearVelocityY = 0;
+        rb.linearVelocityY += jumpHeight * Time.deltaTime;
+        if (rb.linearVelocityX > 0)
+        {
+            rb.linearVelocityX = -rb.linearVelocityX;
+        }
+        timesJumped++;
+    }
+
+    private void Clone(Vector2 velocity)
+    {
+        GameObject projectileClone = Instantiate(gameObject, (Vector2)gameObject.transform.position + new Vector2(0, 5), Quaternion.identity);
+        Rigidbody2D rbClone = projectileClone.GetComponent<Rigidbody2D>();
+
+        projectileClone.tag = "Clone";
+        rbClone.gravityScale = gravity;
+        rbClone.linearVelocity = velocity;
     }
 
     private Vector2[] Plot(Rigidbody2D rigidbody, Vector2 pos, Vector2 velocity, int steps)
@@ -109,5 +120,15 @@ public class Projectile : MonoBehaviour
         }
 
         return results;
+    }
+
+    public void AllowMultiJump(bool allow)
+    {
+        allowMultiJump = allow;
+    }
+
+    public void CanShoot(bool canShoot)
+    {
+        this.canShoot = canShoot;
     }
 }
