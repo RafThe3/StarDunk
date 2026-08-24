@@ -6,12 +6,24 @@ using UnityEngine.SceneManagement;
 
 public class GameManager : MonoBehaviour
 {
+    public static GameManager instance;
+
     [SerializeField] private bool enableGameTimer = false;
     [SerializeField] private int gameLengthInSeconds = 120;
     [SerializeField] private TextMeshProUGUI gameTimerText;
 
     private float seconds;
     private int minutes;
+
+    public void Awake()
+    {
+        if (instance)
+        {
+            Debug.LogError("More than one instance of Game Manager found!");
+        }
+        instance = this;
+        DontDestroyOnLoad(gameObject);
+    }
 
     private void Start()
     {
@@ -27,24 +39,24 @@ public class GameManager : MonoBehaviour
 
     private void SetTimer()
     {
-        if (!enableGameTimer)
+        bool isGameOver = seconds <= 0 && minutes <= 0;
+        //Debug.Log($"Is Game Over: {isGameOver}");
+        //Debug.Log($"Minutes: {minutes}, Seconds: {seconds}");
+
+        if (!enableGameTimer || isGameOver)
         {
+            seconds = 0;
+            minutes = 0;
+            SceneManager.LoadScene(0);
             return;
         }
 
         seconds -= Time.deltaTime;
 
-        if (seconds <= 0)
+        if (seconds <= 0 && minutes > 0)
         {
             minutes--;
             seconds += 60;
-
-            if (minutes <= 0)
-            {
-                minutes = 0;
-                seconds = 0;
-                return;
-            }
         }
 
         gameTimerText.text = $"{minutes}:{(int)seconds:00}";

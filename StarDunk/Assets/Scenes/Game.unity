@@ -1493,6 +1493,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3c32dd398361b324199e3ccf501ca9bf, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  enableGameTimer: 1
   gameLengthInSeconds: 120
   gameTimerText: {fileID: 1426212124}
 --- !u!4 &695109124
@@ -2076,10 +2077,10 @@ RectTransform:
   m_Children: []
   m_Father: {fileID: 1976970126}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 1}
-  m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 444, y: -912}
-  m_SizeDelta: {x: 750.8702, y: 138.4415}
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 0, y: 0}
+  m_AnchoredPosition: {x: 444, y: 168}
+  m_SizeDelta: {x: 750.8702, y: 138.44153}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!1 &768862419
 GameObject:
