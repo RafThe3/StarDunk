@@ -80,4 +80,14 @@ public class GameManager : MonoBehaviour
     {
         SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex + 1);
     }
+
+    public void LoadAScene(int buildIndex)
+    {
+        SceneManager.LoadScene(buildIndex);
+    }
+
+    public void LoadAScene(string buildName)
+    {
+        SceneManager.LoadScene(buildName);
+    }
 }
