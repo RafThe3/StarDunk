@@ -1,1 +1,3 @@
-This is a somewhat replica of the popular 2010 mobile game _StarDunk_.
+# StarDunk
+
+This project attempts to recreate the popular 2010 mobile game _StarDunk_, developed by Godzilab, and published by Playdigious, which has now been abandoned. This game includes a replica of most of the mechanics in the original game, as well as audio, visuals, art, models, and UI.
